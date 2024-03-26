@@ -11,7 +11,7 @@ class AircrackOnly(plugins.Plugin):
     __description__ = 'Confirm pcap contains a handshake/PMKID and copy it to a directory'
 
     def __init__(self):
-        self.directory = '/home/scifijunkie'
+        self.directory = '/home/pi'
 
     def on_loaded(self):
         logging.info("AircrackOnly plugin loaded")
