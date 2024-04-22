@@ -86,14 +86,14 @@ class HandshakesDL(plugins.Plugin):
             return "Plugin not ready"
 
         if path == "/" or not path:
-            handshakes = glob.glob(os.path.join(self.config['bettercap']['handshakes'], "*.pcap"))
+            handshakes = glob.glob(os.path.join("/home/pi", "*.pcap"))
             handshakes = [os.path.basename(path)[:-5] for path in handshakes]
             return render_template_string(TEMPLATE,
                                     title="Handshakes | " + pwnagotchi.name(),
                                     handshakes=handshakes)
 
         else:
-            dir = self.config['bettercap']['handshakes']
+            dir = "/home/pi"
             try:
                 logging.info(f"[HandshakesDL] serving {dir}/{path}.pcap")
                 return send_from_directory(directory=dir, filename=path+'.pcap', as_attachment=True)
