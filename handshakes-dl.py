@@ -87,15 +87,20 @@ class HandshakesDL(plugins.Plugin):
 
         if path == "/" or not path:
             handshakes = glob.glob(os.path.join("/home/pi", "*.pcap"))
-            handshakes = [os.path.basename(path)[:-5] for path in handshakes]
+            handshakes = [os.path.basename(handshake) for handshake in handshakes]
             return render_template_string(TEMPLATE,
                                     title="Handshakes | " + pwnagotchi.name(),
                                     handshakes=handshakes)
 
         else:
-            dir = "/home/pi"
+            directory = "/home/pi"
             try:
-                logging.info(f"[HandshakesDL] serving {dir}/{path}.pcap")
-                return send_from_directory(directory=dir, filename=path+'.pcap', as_attachment=True)
+                file_path = os.path.join(directory, path)
+                logging.info(f"[HandshakesDL] serving {file_path}")
+                return send_from_directory(directory=directory, path='.', filename=path, as_attachment=True)
             except FileNotFoundError:
+                logging.error("File not found")
                 abort(404)
+            except Exception as e:
+                logging.error(f"Error: {e}")
+                abort(500)
