@@ -6,9 +6,7 @@ import glob
 import pwnagotchi
 import pwnagotchi.plugins as plugins
 
-from flask import abort
-from flask import send_from_directory
-from flask import render_template_string
+from flask import abort, send_from_directory, render_template_string
 
 TEMPLATE = """
 {% extends "base.html" %}
@@ -37,11 +35,9 @@ TEMPLATE = """
 
     filter.onkeyup = function() {
         document.body.style.cursor = 'progress';
-        var table, tr, tds, td, i, txtValue;
-        filterVal = filter.value.toUpperCase();
-        li = shakeList.getElementsByTagName("li");
-        for (i = 0; i < li.length; i++) {
-            txtValue = li[i].textContent || li[i].innerText;
+        var li = shakeList.getElementsByTagName("li");
+        for (var i = 0; i < li.length; i++) {
+            var txtValue = li[i].textContent || li[i].innerText;
             if (txtValue.toUpperCase().indexOf(filterVal) > -1) {
                 li[i].style.display = "list-item";
             } else {
@@ -50,7 +46,6 @@ TEMPLATE = """
         }
         document.body.style.cursor = 'default';
     }
-
 {% endblock %}
 
 {% block content %}
@@ -58,7 +53,7 @@ TEMPLATE = """
     <ul id="list" data-role="listview" style="list-style-type:disc;">
         {% for handshake in handshakes %}
             <li class="file">
-                <a href="/plugins/handshakes-dl/{{handshake}}">{{handshake}}</a>
+                <a href="/plugins/handshakes-dl/{{ handshake }}">{{ handshake }}</a>
             </li>
         {% endfor %}
     </ul>
@@ -89,15 +84,14 @@ class HandshakesDL(plugins.Plugin):
             handshakes = glob.glob(os.path.join("/home/pi", "*.pcap"))
             handshakes = [os.path.basename(handshake) for handshake in handshakes]
             return render_template_string(TEMPLATE,
-                                    title="Handshakes | " + pwnagotchi.name(),
-                                    handshakes=handshakes)
-
+                                          title="Handshakes | " + pwnagotchi.name(),
+                                          handshakes=handshakes)
         else:
             directory = "/home/pi"
             try:
                 file_path = os.path.join(directory, path)
                 logging.info(f"[HandshakesDL] serving {file_path}")
-                return send_from_directory(directory=directory, path='.', filename=path, as_attachment=True)
+                return send_from_directory(directory=directory, filename=path, as_attachment=True)
             except FileNotFoundError:
                 logging.error("File not found")
                 abort(404)
